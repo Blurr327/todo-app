@@ -73,6 +73,7 @@ function Project(name, i) {
     const removeToDo =   (toDo) => {
         if(getIndex in toDo) delete toDoArray[toDo.getIndex()%toDoArray.length];
     }
+    const getNumOfToDos = () => toDoArray.length;
 
 
     const getName = () => inName;
@@ -80,12 +81,19 @@ function Project(name, i) {
         if(typeof name === "string") inName = name;
     }
 
+    const getIndex = () => index;
+    const setIndex = (i) => {
+        if(Number.isInteger(i)) index = i;
+    }
+
     return {
         getIthToDo,
         addToDo,
         removeToDo,
         getName,
-        setName
+        setName,
+        getNumOfToDos,
+        getIndex
     };
 }
 
@@ -107,10 +115,18 @@ function AppModel() {
         if(removeToDo in project) project.removeToDo(toDo);
     }
 
+    const getIthProject = (i) => {
+        if(Number.isInteger(i)) return projects[i%projects.length];
+    }
+
+    const getNumOfProjects = () => projects.length;
+
     return {
         addProject,
         removeProject,
         addToDoToProject,
-        removeToDoFromProject
+        removeToDoFromProject,
+        getIthProject,
+        getNumOfProjects
     };
 }
