@@ -1,10 +1,22 @@
-export { addElementsToMainElement, addDataToElements }
+export { createElement, getAllChildrenArray, toggleVisibilityOfElements }
 
 
-const addElementsToMainElement = (mainElement, ...elements) => {
-    elements.every(e => mainElement.appendChild(e));
+const createElement = (doc, type, optionsObj) => {
+    const e = doc.createElement(type);
+    if(optionsObj.hidable) optionsObj.hidableElements.push(e);
+    if(optionsObj.data) e.dataset[optionsObj.data.name] = optionsObj.data.content;
+    if(optionsObj.contentEdit) e.contentEditable = optionsObj.contentEdit;
+    if(optionsObj.parent && (optionsObj.hidable==false)) parent.appendChild(e);
+    return e;
 }
 
-const addDataToElements = (dataName, data, ...elements) => {
-    elements.every(e => e.dataset['dataName'] = data);
+const getAllChildrenArray = (element) => {
+    return Array.from(element.children);
+}
+
+const toggleVisibilityOfElements = (root, hidableElements) => {
+    for(let e of hidableElements) {
+        if(root.contains(e)) root.removeChild(e);
+        else root.appendChild(e);
+    }
 }

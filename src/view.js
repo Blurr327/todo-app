@@ -1,104 +1,148 @@
 import { format } from "date-fns";
-import { addElementsToMainElement, addDataToElements } from "dom-manipulation";
+import { createElement, toggleVisibilityOfElements } from "./dom-manipulation.js";
+
+export { AppView };
 
 function ToDoView(doc, toDo) {
-    const toDoDiv = doc.createElement("div");
-    const dateSpan = doc.createElement("span");
-    const titleDiv = doc.createElement("div");
-    const priorityButton = doc.createElement("button");
-    const checkDiv = doc.createElement("div");
-    const descriptionDiv = doc.createElement("div");
-    toDoDiv.classList.add("todo");
+    const hidableElements = [];
+    let commonOptionsObj = {
+        hidableElements,
+        data: {
+            dataName:"index",
+            content:toDo.getIndex()
+        },
+        contentEdit:true
+    }
+    const toDoDiv = createElement(doc, "div",Object.assign(commonOptionsObj, {contentEdit:false}));
+    commonOptionsObj = Object.assign(commonOptionsObj, {parent: toDoDiv});
 
-    addElementsToMainElement(toDoDiv ,dateSpan, titleDiv, priorityButton, checkDiv);
-    addDataToAllElements("index", toDo.getIndex());
+    const dateSpan = createElement(doc, "span", commonOptionsObj);
+    const titleDiv = createElement(doc, "div", commonOptionsObj);
+    const priorityDiv = createElement(doc, "div", commonOptionsObj);
+    const checkDiv = createElement(doc, "div", Object.assign(commonOptionsObj, {contentEdit:false}));
+    const descriptionDiv = createElement(doc, "div",Object.assign(commonOptionsObj, {hidable:true}));
+    const showButton = createElement(doc, "button", commonOptionsObj);
+    toDoDiv.classList.add("todo", commonOptionsObj);
 
-    const displayString = (textElement, text, className) => {
+    const updateDisplayString = (textElement, text, className) => {
         if(typeof text !== "string" && typeof className !== "string") return;
         textElement.classList.add(className);
         textElement.textContent = text;
     }
 
-    const displayDescription = () => {
-        displayString(descriptionDiv, toDo.getDescription(), "description");
+    const updateDisplayDescription = () => {
+        updateDisplayString(descriptionDiv, toDo.getDescription(), "description");
     }
 
-    const displayDueDate = () => {
+    const updateDisplayDueDate = () => {
         dateSpan.classList.add("date");
         dateSpan.textContent = format(toDo.getDueDate(), "yyyy-MM-dd");
     }
 
-    const displayChecked = () => {
+    const updateDisplayChecked = () => {
         checkDiv.classList.add("checkbox");
         checkDiv.dataset.checked = toDo.getChecked();
     }
 
-    const displayTitle = () => {
-        displayString(titleDiv, toDo.getTitle(), "title");
+    const updateDisplayTitle = () => {
+        updateDisplayString(titleDiv, toDo.getTitle(), "title");
     }
 
-    const displayPriority = () => {
-        displayString(priorityButton, toDo.getPriority().toString(), "priority");
+    const updateDisplayPriority = () => {
+        updateDisplayString(priorityDiv, toDo.getPriority().toString(), "priority");
     }
 
-    const displayToDo = (containerDiv) => {
-        displayDescription(), displayDueDate(),
-        displayChecked(), displayTitle(),
-        displayPriority();
-        containerDiv.appendChild(toDoView);
+    const updateDisplayShowButton = () => {
+        showButton.textContent = (showButton.classList.contains("expanded")) ? "V" : "Λ";
     }
 
-    const addDataToAllElements = (dataName, data) => {
-        addDataToElements(dataName, data, toDoDiv, titleDiv,
-            descriptionDiv, dateSpan, checkDiv, priorityButton);
+    const updateDisplayToDo = () => {
+        updateDisplayDescription(), updateDisplayDueDate(),
+        updateDisplayChecked(), updateDisplayTitle(),
+        updateDisplayPriority(), updateDisplayShowButton();
+    }
+
+    const appendToDoDivTo = (containerDiv) => {
+        containerDiv.apendChild(toDoDiv);
+    }
+
+    const toggleHidableElements  = () => {
+        toggleVisibilityOfElements(toDoDiv, hidableElements);
     }
 
     return {
-        displayToDo
+        updateDisplayToDo,
+        toggleHidableElements,
+        appendToDoDivTo
     }
 }
 
 function ProjectView(doc, project) {
-    const projectDiv = doc.createElement("div");
-    const nameDiv = doc.createElement("div");
-    const toDosDiv  = doc.createElment("div");
+    const hidableElements = [];
+    let commonOptionsObj = {
+        hidableElements,
+        data: {
+            dataName:"index",
+            content:toDo.getIndex()
+        }
+    }
+    const projectDiv = createElement(doc, "div", commonOptionsObj);
+    commonOptionsObj = Object.assign(commonOptionsObj, {parent: projectDiv});
 
-    addElementsToMainElement(projectDiv, nameDiv, toDosDiv);
+    const nameDiv = createElement(doc, "div", commonOptionsObj);
+    const toDosDiv  = createElement(doc, "div", Object.assign(commonOptionsObj, {hidable:true}));
+    const showButton = createElement(doc, "button", commonOptionsObj)
 
-
-    const displayToDos = () => {
+    const updateDisplayToDos = () => {
         toDosDiv.textContent = "";
         for(let i =0;i<project.getNumOfToDos();i++) {
-            const todoview = ToDoView(doc, project.getIthToDo(i));
-            todoview.displayToDo(toDosDiv); // might be problematic (passing by reference or... ?)
+            const toDoView = ToDoView(doc, project.getIthToDo(i));
+            toDoView.updateDisplayToDo(); // might be problematic (passing by reference or... ?)
+            toDoView.appendToDoDivTo(toDosDiv);
         }
     }
 
-    const displayName = () => nameDiv.textContent = project.getName();
+    const updateDisplayName = () => nameDiv.textContent = project.getName();
 
-    const displayProject = (containerDiv) => {
-        displayToDos(), displayName();
+    const updateDisplayShowButton = () => {
+        showButton.textContent = (showButton.classList.contains("expanded")) ? "v" : "^";
+    }
+
+    const updateDisplayProject = () => {
+        updateDisplayToDos(), updateDisplayName(), updateDisplayShowButton();
+    }
+
+    const appendProjectDivTo = (containerDiv) => {
         containerDiv.appendChild(projectDiv);
     }
 
+    const toggleHidableElements  = () => {
+        toggleVisibilityOfElements(projectDiv, hidableElements);
+    }
+
     return {
-        displayProject
+        updateDisplayProject,
+        toggleHidableElements,
+        appendProjectDivTo
     }
 }
 
 function AppView(doc, appModel) {
     const projectsDiv = doc.createElment("div");
+    const body = doc.querySelector("body");
 
+    body.appendChild(projectsDiv);
 
-    const displayProjects = () => {
+    const updateDisplayProjects = () => {
         projectsDiv.textContent = "";
         for(let i = 0;i<appModel.getNumOfProjects();i++) {
             const projectView = ProjectView(doc, appModel.getIthProject(i));
-            projectView.displayProject(projectsDiv); // might be problematic (passing by reference or... ?)
+            projectView.updateDisplayProject(projectsDiv); // might be problematic (passing by reference or... ?)
+            projectView.appendProjectDivTo(projectsDiv);
         }
     }
 
     return {
-        displayProjects
+        updateDisplayProjects
     };
 }

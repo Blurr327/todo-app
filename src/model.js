@@ -33,8 +33,8 @@ function ToDo(title, dueDate, description, priority, checked, i) {
     };
 
     const getChecked = () => inChecked;
-    const setChecked = (c) => {
-        if (typeof c === "boolean") inChecked = c;
+    const toggleChecked = () => {
+        inChecked = !inChecked;
     };
 
     const getIndex = () => index;
@@ -52,7 +52,7 @@ function ToDo(title, dueDate, description, priority, checked, i) {
         getPriority,
         setPriority,
         getChecked,
-        setChecked,
+        toggleChecked,
         getIndex,
         setIndex
     };
