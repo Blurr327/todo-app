@@ -6,7 +6,7 @@ const createElement = (doc, type, optionsObj) => {
     if(optionsObj.hidable) optionsObj.hidableElements.push(e);
     if(optionsObj.data) e.dataset[optionsObj.data.name] = optionsObj.data.content;
     if(optionsObj.contentEdit) e.contentEditable = optionsObj.contentEdit;
-    if(optionsObj.parent && (optionsObj.hidable==false)) parent.appendChild(e);
+    if(optionsObj.parent && (!optionsObj.hidable)) optionsObj.parent.appendChild(e);
     return e;
 }
 

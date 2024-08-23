@@ -8,10 +8,6 @@ function ToDo(title, dueDate, description, priority, checked, i) {
         inChecked,
         index;
 
-    setTitle(title), setDueDate(dueDate),
-    setDescription(description), setPriority(priority),
-    setChecked(checked), setIndex(i);
-
     const getTitle = () => inTitle;
     const setTitle = (t) => {
         if (typeof t === "string") inTitle = t;
@@ -42,6 +38,10 @@ function ToDo(title, dueDate, description, priority, checked, i) {
         if(Number.isInteger(i)) index = i;
     }
 
+    setTitle(title), setDueDate(dueDate),
+    setDescription(description), setPriority(priority),
+    setIndex(i);
+
     return {
         getTitle,
         setTitle,
@@ -64,11 +64,9 @@ function Project(name, i) {
     let index;
     const toDoArray = [];
 
-    setIndex(i);
-
     const getIthToDo = (i) => toDoArray[i%toDoArray.length];
-    const addToDo = (title, dueDate, description, priority, checked) => {
-        toDoArray.push(ToDo(title,dueDate,description,priority,checked, toDoArray.length));
+    const addToDo = (title, dueDate, description, priority) => {
+        toDoArray.push(ToDo(title,dueDate,description,priority, toDoArray.length));
     }
     const removeToDo =   (toDo) => {
         if(getIndex in toDo) delete toDoArray[toDo.getIndex()%toDoArray.length];
@@ -85,6 +83,8 @@ function Project(name, i) {
     const setIndex = (i) => {
         if(Number.isInteger(i)) index = i;
     }
+
+    setIndex(i);
 
     return {
         getIthToDo,
@@ -107,8 +107,8 @@ function AppModel() {
         if(getIndex in project) delete toDoArray[project.getIndex()%projects.length]
     }
 
-    const addToDoToProject = (project, dueDate, description, priority, checked) => {
-        if(addToDo in project) project.addToDo(dueDate, description, priority, checked);
+    const addToDoToProject = (project, title, dueDate, description, priority) => {
+        project.addToDo(title, dueDate, description, priority);
     };
 
     const removeToDoFromProject = (project, toDo) => {

@@ -9,20 +9,20 @@ function ToDoView(doc, toDo) {
         hidableElements,
         data: {
             dataName:"index",
-            content:toDo.getIndex()
-        },
-        contentEdit:true
+            content: toDo.getIndex()
+        }
     }
-    const toDoDiv = createElement(doc, "div",Object.assign(commonOptionsObj, {contentEdit:false}));
+    const toDoDiv = createElement(doc, "div",Object.assign({},commonOptionsObj));
     commonOptionsObj = Object.assign(commonOptionsObj, {parent: toDoDiv});
+    const editableOptionsObj = Object.assign({},commonOptionsObj, {contentEdit:true});
 
-    const dateSpan = createElement(doc, "span", commonOptionsObj);
-    const titleDiv = createElement(doc, "div", commonOptionsObj);
-    const priorityDiv = createElement(doc, "div", commonOptionsObj);
-    const checkDiv = createElement(doc, "div", Object.assign(commonOptionsObj, {contentEdit:false}));
-    const descriptionDiv = createElement(doc, "div",Object.assign(commonOptionsObj, {hidable:true}));
-    const showButton = createElement(doc, "button", commonOptionsObj);
-    toDoDiv.classList.add("todo", commonOptionsObj);
+    const dateSpan = createElement(doc, "span", editableOptionsObj);
+    const titleDiv = createElement(doc, "div", editableOptionsObj);
+    const priorityDiv = createElement(doc, "div", editableOptionsObj);
+    const checkDiv = createElement(doc, "div", Object.assign({}, commonOptionsObj));
+    const descriptionDiv = createElement(doc, "div",Object.assign({}, commonOptionsObj, {hidable:true}));
+    const showButton = createElement(doc, "button", editableOptionsObj);
+    toDoDiv.classList.add("todo");
 
     const updateDisplayString = (textElement, text, className) => {
         if(typeof text !== "string" && typeof className !== "string") return;
@@ -63,7 +63,7 @@ function ToDoView(doc, toDo) {
     }
 
     const appendToDoDivTo = (containerDiv) => {
-        containerDiv.apendChild(toDoDiv);
+        containerDiv.appendChild(toDoDiv);
     }
 
     const toggleHidableElements  = () => {
@@ -83,15 +83,15 @@ function ProjectView(doc, project) {
         hidableElements,
         data: {
             dataName:"index",
-            content:toDo.getIndex()
+            content:project.getIndex()
         }
     }
     const projectDiv = createElement(doc, "div", commonOptionsObj);
     commonOptionsObj = Object.assign(commonOptionsObj, {parent: projectDiv});
 
     const nameDiv = createElement(doc, "div", commonOptionsObj);
-    const toDosDiv  = createElement(doc, "div", Object.assign(commonOptionsObj, {hidable:true}));
-    const showButton = createElement(doc, "button", commonOptionsObj)
+    const toDosDiv  = createElement(doc, "div", Object.assign({},commonOptionsObj, {hidable:true}));
+    const showButton = createElement(doc, "button", commonOptionsObj);
 
     const updateDisplayToDos = () => {
         toDosDiv.textContent = "";
@@ -105,7 +105,7 @@ function ProjectView(doc, project) {
     const updateDisplayName = () => nameDiv.textContent = project.getName();
 
     const updateDisplayShowButton = () => {
-        showButton.textContent = (showButton.classList.contains("expanded")) ? "v" : "^";
+        showButton.textContent = (showButton.classList.contains("expanded")) ? "V" : "Λ";
     }
 
     const updateDisplayProject = () => {
@@ -128,16 +128,18 @@ function ProjectView(doc, project) {
 }
 
 function AppView(doc, appModel) {
-    const projectsDiv = doc.createElment("div");
-    const body = doc.querySelector("body");
+    const projectsDiv = doc.createElement("div");
+    const contentDiv = doc.querySelector("#content");
 
-    body.appendChild(projectsDiv);
+    projectsDiv.classList.add("projects");
+
+    contentDiv.appendChild(projectsDiv);
 
     const updateDisplayProjects = () => {
         projectsDiv.textContent = "";
         for(let i = 0;i<appModel.getNumOfProjects();i++) {
             const projectView = ProjectView(doc, appModel.getIthProject(i));
-            projectView.updateDisplayProject(projectsDiv); // might be problematic (passing by reference or... ?)
+            projectView.updateDisplayProject(); // might be problematic (passing by reference or... ?)
             projectView.appendProjectDivTo(projectsDiv);
         }
     }
