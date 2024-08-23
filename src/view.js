@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { createElement, toggleVisibilityOfElements } from "./dom-manipulation.js";
+import { createElement, toggleVisibilityOfElements, updateDisplayShowButton } from "./dom-manipulation.js";
 
 export { AppView };
 
@@ -16,13 +16,12 @@ function ToDoView(doc, toDo) {
     Object.assign(commonOptionsObj, {parent: toDoDiv});
     const editableOptionsObj = Object.assign({},commonOptionsObj, {contentEdit:true});
 
-    const dateSpan = createElement(doc, "span", Object.assign({}, editableOptionsObj, {className:"date"}));
-    const titleDiv = createElement(doc, "div", Object.assign({}, editableOptionsObj, {className:"title"}));
-    const priorityDiv = createElement(doc, "div", Object.assign({}, editableOptionsObj, {className:"priority"}));
+    const dateSpan = createElement(doc, "span", Object.assign({}, editableOptionsObj, {className:"date", contentEdit:true}));
+    const titleDiv = createElement(doc, "div", Object.assign({}, editableOptionsObj, {className:"title", contentEdit:true}));
+    const priorityDiv = createElement(doc, "div", Object.assign({}, editableOptionsObj, {className:"priority", contentEdit:true}));
     const checkDiv = createElement(doc, "div", Object.assign({}, commonOptionsObj, {className:"checkbox"}));
-    const descriptionDiv = createElement(doc, "div",Object.assign({}, commonOptionsObj, {hidable:true, className:"description"}));
+    const descriptionDiv = createElement(doc, "div",Object.assign({}, commonOptionsObj, {hidable:true, className:"description", contentEdit:true}));
     const showButton = createElement(doc, "button", editableOptionsObj);
-    toDoDiv.classList.add("todo");
 
     const updateDisplayString = (textElement, text) => {
         if(typeof text !== "string") return;
@@ -49,14 +48,11 @@ function ToDoView(doc, toDo) {
         updateDisplayString(priorityDiv, toDo.getPriority().toString());
     }
 
-    const updateDisplayShowButton = () => {
-        showButton.textContent = (showButton.classList.contains("expanded")) ? "V" : "Λ";
-    }
-
     const updateDisplayToDo = () => {
         updateDisplayDescription(), updateDisplayDueDate(),
         updateDisplayChecked(), updateDisplayTitle(),
-        updateDisplayPriority(), updateDisplayShowButton();
+        updateDisplayPriority();
+        updateDisplayShowButton(showButton);
     }
 
     const appendToDoDivTo = (containerDiv) => {
@@ -64,7 +60,7 @@ function ToDoView(doc, toDo) {
     }
 
     const toggleHidableElements  = () => {
-        toggleVisibilityOfElements(toDoDiv, hidableElements);
+        toggleVisibilityOfElements(toDoDiv, hidableElements, showButton);
     }
 
     return {
@@ -86,7 +82,7 @@ function ProjectView(doc, project) {
     const projectDiv = createElement(doc, "div", Object.assign({}, commonOptionsObj, {className:"project"}));
     Object.assign(commonOptionsObj, {parent: projectDiv});
 
-    const nameDiv = createElement(doc, "div", Object.assign({}, commonOptionsObj, {className:"title"}));
+    const nameDiv = createElement(doc, "div", Object.assign({}, commonOptionsObj, {className:"title", contentEdit:true}));
     const toDosDiv  = createElement(doc, "div", Object.assign({},commonOptionsObj, {hidable:true}));
     const showButton = createElement(doc, "button", commonOptionsObj);
 
@@ -101,12 +97,9 @@ function ProjectView(doc, project) {
 
     const updateDisplayName = () => nameDiv.textContent = project.getName();
 
-    const updateDisplayShowButton = () => {
-        showButton.textContent = (showButton.classList.contains("expanded")) ? "V" : "Λ";
-    }
-
     const updateDisplayProject = () => {
-        updateDisplayToDos(), updateDisplayName(), updateDisplayShowButton();
+        updateDisplayToDos(), updateDisplayName();
+        updateDisplayShowButton(showButton);
     }
 
     const appendProjectDivTo = (containerDiv) => {
@@ -114,7 +107,7 @@ function ProjectView(doc, project) {
     }
 
     const toggleHidableElements  = () => {
-        toggleVisibilityOfElements(projectDiv, hidableElements);
+        toggleVisibilityOfElements(projectDiv, hidableElements, showButton);
     }
 
     return {

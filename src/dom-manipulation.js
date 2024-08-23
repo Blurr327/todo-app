@@ -1,4 +1,4 @@
-export { createElement, getAllChildrenArray, toggleVisibilityOfElements }
+export { createElement, getAllChildrenArray, toggleVisibilityOfElements, updateDisplayShowButton }
 
 
 const createElement = (doc, type, optionsObj) => {
@@ -15,9 +15,15 @@ const getAllChildrenArray = (element) => {
     return Array.from(element.children);
 }
 
-const toggleVisibilityOfElements = (root, hidableElements) => {
+const updateDisplayShowButton = (showButton) => {
+    showButton.textContent = (showButton.classList.contains("expanded")) ? "V" : "Λ";
+}
+
+const toggleVisibilityOfElements = (root, hidableElements, showButton) => {
     for(let e of hidableElements) {
         if(root.contains(e)) root.removeChild(e);
         else root.appendChild(e);
     }
+    showButton.classList.toggle("expanded");
+    updateDisplayShowButton(showButton);
 }
