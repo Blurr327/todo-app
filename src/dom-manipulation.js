@@ -7,6 +7,7 @@ const createElement = (doc, type, optionsObj) => {
     if(optionsObj.data) e.dataset[optionsObj.data.name] = optionsObj.data.content;
     if(optionsObj.contentEdit) e.contentEditable = optionsObj.contentEdit;
     if(optionsObj.parent && (!optionsObj.hidable)) optionsObj.parent.appendChild(e);
+    if(optionsObj.className) e.classList.add(optionsObj.className);
     return e;
 }
 

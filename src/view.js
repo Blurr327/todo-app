@@ -12,44 +12,41 @@ function ToDoView(doc, toDo) {
             content: toDo.getIndex()
         }
     }
-    const toDoDiv = createElement(doc, "div",Object.assign({},commonOptionsObj));
-    commonOptionsObj = Object.assign(commonOptionsObj, {parent: toDoDiv});
+    const toDoDiv = createElement(doc, "div",Object.assign({},commonOptionsObj, {className:"todo"}));
+    Object.assign(commonOptionsObj, {parent: toDoDiv});
     const editableOptionsObj = Object.assign({},commonOptionsObj, {contentEdit:true});
 
-    const dateSpan = createElement(doc, "span", editableOptionsObj);
-    const titleDiv = createElement(doc, "div", editableOptionsObj);
-    const priorityDiv = createElement(doc, "div", editableOptionsObj);
-    const checkDiv = createElement(doc, "div", Object.assign({}, commonOptionsObj));
-    const descriptionDiv = createElement(doc, "div",Object.assign({}, commonOptionsObj, {hidable:true}));
+    const dateSpan = createElement(doc, "span", Object.assign({}, editableOptionsObj, {className:"date"}));
+    const titleDiv = createElement(doc, "div", Object.assign({}, editableOptionsObj, {className:"title"}));
+    const priorityDiv = createElement(doc, "div", Object.assign({}, editableOptionsObj, {className:"priority"}));
+    const checkDiv = createElement(doc, "div", Object.assign({}, commonOptionsObj, {className:"checkbox"}));
+    const descriptionDiv = createElement(doc, "div",Object.assign({}, commonOptionsObj, {hidable:true, className:"description"}));
     const showButton = createElement(doc, "button", editableOptionsObj);
     toDoDiv.classList.add("todo");
 
-    const updateDisplayString = (textElement, text, className) => {
-        if(typeof text !== "string" && typeof className !== "string") return;
-        textElement.classList.add(className);
+    const updateDisplayString = (textElement, text) => {
+        if(typeof text !== "string") return;
         textElement.textContent = text;
     }
 
     const updateDisplayDescription = () => {
-        updateDisplayString(descriptionDiv, toDo.getDescription(), "description");
+        updateDisplayString(descriptionDiv, toDo.getDescription());
     }
 
     const updateDisplayDueDate = () => {
-        dateSpan.classList.add("date");
         dateSpan.textContent = format(toDo.getDueDate(), "yyyy-MM-dd");
     }
 
     const updateDisplayChecked = () => {
-        checkDiv.classList.add("checkbox");
         checkDiv.dataset.checked = toDo.getChecked();
     }
 
     const updateDisplayTitle = () => {
-        updateDisplayString(titleDiv, toDo.getTitle(), "title");
+        updateDisplayString(titleDiv, toDo.getTitle());
     }
 
     const updateDisplayPriority = () => {
-        updateDisplayString(priorityDiv, toDo.getPriority().toString(), "priority");
+        updateDisplayString(priorityDiv, toDo.getPriority().toString());
     }
 
     const updateDisplayShowButton = () => {
@@ -86,10 +83,10 @@ function ProjectView(doc, project) {
             content:project.getIndex()
         }
     }
-    const projectDiv = createElement(doc, "div", commonOptionsObj);
-    commonOptionsObj = Object.assign(commonOptionsObj, {parent: projectDiv});
+    const projectDiv = createElement(doc, "div", Object.assign({}, commonOptionsObj, {className:"project"}));
+    Object.assign(commonOptionsObj, {parent: projectDiv});
 
-    const nameDiv = createElement(doc, "div", commonOptionsObj);
+    const nameDiv = createElement(doc, "div", Object.assign({}, commonOptionsObj, {className:"title"}));
     const toDosDiv  = createElement(doc, "div", Object.assign({},commonOptionsObj, {hidable:true}));
     const showButton = createElement(doc, "button", commonOptionsObj);
 
