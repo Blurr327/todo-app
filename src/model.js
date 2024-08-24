@@ -1,11 +1,11 @@
 export { AppModel }
 
-function ToDo(title, dueDate, description, priority, checked, i) {
+function ToDo(title, dueDate, description, priority, i) {
     let inTitle,
         inDueDate,
         inDescription,
         inPriority,
-        inChecked,
+        checked,
         index;
 
     const getTitle = () => inTitle;
@@ -28,9 +28,9 @@ function ToDo(title, dueDate, description, priority, checked, i) {
         if (typeof p === "number") inPriority = p;
     };
 
-    const getChecked = () => inChecked;
+    const getChecked = () => checked;
     const toggleChecked = () => {
-        inChecked = !inChecked;
+        checked = !checked;
     };
 
     const getIndex = () => index;
@@ -64,14 +64,14 @@ function Project(name, i) {
     let index;
     const toDoArray = [];
 
-    const getIthToDo = (i) => toDoArray[i%toDoArray.length];
+    const getIthSubElement = (i) => toDoArray[i%toDoArray.length];
     const addToDo = (title, dueDate, description, priority) => {
         toDoArray.push(ToDo(title,dueDate,description,priority, toDoArray.length));
     }
     const removeToDo =   (toDo) => {
         if(getIndex in toDo) delete toDoArray[toDo.getIndex()%toDoArray.length];
     }
-    const getNumOfToDos = () => toDoArray.length;
+    const getNumOfSubElements = () => toDoArray.length;
 
 
     const getName = () => inName;
@@ -87,12 +87,12 @@ function Project(name, i) {
     setIndex(i);
 
     return {
-        getIthToDo,
+        getIthSubElement,
         addToDo,
         removeToDo,
         getName,
         setName,
-        getNumOfToDos,
+        getNumOfSubElements,
         getIndex
     };
 }
@@ -115,18 +115,18 @@ function AppModel() {
         if(removeToDo in project) project.removeToDo(toDo);
     }
 
-    const getIthProject = (i) => {
-        if(Number.isInteger(i)) return projects[i%projects.length];
+    const getIthSubElement = (i) => {
+        return projects[i%projects.length];
     }
 
-    const getNumOfProjects = () => projects.length;
+    const getNumOfSubElements = () => projects.length;
 
     return {
         addProject,
         removeProject,
         addToDoToProject,
         removeToDoFromProject,
-        getIthProject,
-        getNumOfProjects
+        getIthSubElement,
+        getNumOfSubElements
     };
 }

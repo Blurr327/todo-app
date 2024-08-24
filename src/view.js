@@ -8,20 +8,20 @@ function ToDoView(doc, toDo) {
     let commonOptionsObj = {
         hidableElements,
         data: {
-            dataName:"index",
+            name:"index",
             content: toDo.getIndex()
         }
     }
-    const toDoDiv = createElement(doc, "div",Object.assign({},commonOptionsObj, {className:"todo"}));
+    const toDoDiv = createElement(doc, "div",Object.assign({},commonOptionsObj, {classes:["todo"]}));
     Object.assign(commonOptionsObj, {parent: toDoDiv});
     const editableOptionsObj = Object.assign({},commonOptionsObj, {contentEdit:true});
 
-    const dateSpan = createElement(doc, "span", Object.assign({}, editableOptionsObj, {className:"date", contentEdit:true}));
-    const titleDiv = createElement(doc, "div", Object.assign({}, editableOptionsObj, {className:"title", contentEdit:true}));
-    const priorityDiv = createElement(doc, "div", Object.assign({}, editableOptionsObj, {className:"priority", contentEdit:true}));
-    const checkDiv = createElement(doc, "div", Object.assign({}, commonOptionsObj, {className:"checkbox"}));
-    const descriptionDiv = createElement(doc, "div",Object.assign({}, commonOptionsObj, {hidable:true, className:"description", contentEdit:true}));
-    const showButton = createElement(doc, "button", editableOptionsObj);
+    const dateSpan = createElement(doc, "span", Object.assign({}, editableOptionsObj, {classes:["date"]}));
+    const titleDiv = createElement(doc, "div", Object.assign({}, editableOptionsObj, {classes:["title"]}));
+    const priorityDiv = createElement(doc, "div", Object.assign({}, editableOptionsObj, {classes:["priority"]}));
+    const checkDiv = createElement(doc, "div", Object.assign({}, commonOptionsObj, {classes: ["checkbox"]}));
+    const descriptionDiv = createElement(doc, "div",Object.assign({}, editableOptionsObj, {hidable:true, classes:["description"]}));
+    const showButton = createElement(doc, "button", Object.assign({}, commonOptionsObj, {classes:["show", "todo-button"]}));
 
     const updateDisplayString = (textElement, text) => {
         if(typeof text !== "string") return;
@@ -75,21 +75,25 @@ function ProjectView(doc, project) {
     let commonOptionsObj = {
         hidableElements,
         data: {
-            dataName:"index",
-            content:project.getIndex()
+            name: "index",
+            content: project.getIndex()
         }
     }
-    const projectDiv = createElement(doc, "div", Object.assign({}, commonOptionsObj, {className:"project"}));
+    const projectDiv = createElement(doc, "div", Object.assign({}, commonOptionsObj, {classes:["project"]}));
     Object.assign(commonOptionsObj, {parent: projectDiv});
 
-    const nameDiv = createElement(doc, "div", Object.assign({}, commonOptionsObj, {className:"title", contentEdit:true}));
+    const nameDiv = createElement(doc, "div", Object.assign({}, commonOptionsObj, {classes:["title"], contentEdit:true}));
     const toDosDiv  = createElement(doc, "div", Object.assign({},commonOptionsObj, {hidable:true}));
-    const showButton = createElement(doc, "button", commonOptionsObj);
+    const showButton = createElement(doc, "button", Object.assign({}, commonOptionsObj, {classes:["project-button", "show"]}));
+
+    const toDoViewsMap = new Map();
 
     const updateDisplayToDos = () => {
         toDosDiv.textContent = "";
-        for(let i =0;i<project.getNumOfToDos();i++) {
-            const toDoView = ToDoView(doc, project.getIthToDo(i));
+        for(let i =0;i<project.getNumOfSubElements();i++) {
+            if(!toDoViewsMap.has(project.getIthSubElement(i))) toDoViewsMap.set(project.getIthSubElement(i),
+            ToDoView(doc, project.getIthSubElement(i)));
+            let toDoView = toDoViewsMap.get(project.getIthSubElement(i));
             toDoView.updateDisplayToDo(); // might be problematic (passing by reference or... ?)
             toDoView.appendToDoDivTo(toDosDiv);
         }
@@ -110,16 +114,22 @@ function ProjectView(doc, project) {
         toggleVisibilityOfElements(projectDiv, hidableElements, showButton);
     }
 
+    const getSubElementView = (toDo) => {
+        return toDoViewsMap.get(toDo);
+    }
+
     return {
         updateDisplayProject,
         toggleHidableElements,
-        appendProjectDivTo
+        appendProjectDivTo,
+        getSubElementView
     }
 }
 
 function AppView(doc, appModel) {
     const projectsDiv = doc.createElement("div");
     const contentDiv = doc.querySelector("#content");
+    const projectViewsMap = new Map();
 
     projectsDiv.classList.add("projects");
 
@@ -127,14 +137,23 @@ function AppView(doc, appModel) {
 
     const updateDisplayProjects = () => {
         projectsDiv.textContent = "";
-        for(let i = 0;i<appModel.getNumOfProjects();i++) {
-            const projectView = ProjectView(doc, appModel.getIthProject(i));
+        for(let i = 0;i<appModel.getNumOfSubElements();i++) {
+            let projectView;
+            if(!projectViewsMap.has(appModel.getIthSubElement(i))) projectViewsMap.set(appModel.getIthSubElement(i),
+        ProjectView(doc, appModel.getIthSubElement(i)));
+            projectView = projectViewsMap.get(appModel.getIthSubElement(i))
             projectView.updateDisplayProject(); // might be problematic (passing by reference or... ?)
             projectView.appendProjectDivTo(projectsDiv);
         }
     }
 
+
+    const getSubElementView = (project) => {
+        return projectViewsMap.get(project);
+    }
+
     return {
-        updateDisplayProjects
+        updateDisplayProjects,
+        getSubElementView
     };
 }
