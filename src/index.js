@@ -4,7 +4,9 @@ import { AppController } from "./controller.js"
 import "./style.css"
 
 
-const appModel = AppModel();
+const appModel = AppModel(localStorage);
+
+appModel.loadStorage();
 
 appModel.addProject("Finishing this ToDo App");
 

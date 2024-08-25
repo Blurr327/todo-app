@@ -1,6 +1,6 @@
 export { AppModel }
 
-function ToDo(title, dueDate, description, priority, i) {
+function ToDo(title, dueDate, description, priority, i, pi) {
     let inTitle,
         inDueDate,
         inDescription,
@@ -48,7 +48,7 @@ function ToDo(title, dueDate, description, priority, i) {
 
     setTitle(title), setDueDate(dueDate),
     setDescription(description), setPriority(priority),
-    setIndex(i);
+    setIndex(i), setAssociatedProjectIndex(pi);
 
     return {
         getTitle,
@@ -69,15 +69,13 @@ function ToDo(title, dueDate, description, priority, i) {
 }
 
 
-function Project(name, i) {
+function Project(name, i, toDoArray=[]) {
     let inName = name;
     let index;
-    const toDoArray = [];
 
     const getIthSubElement = (i) => toDoArray[i%toDoArray.length];
     const addToDo = (title, dueDate, description, priority) => {
-        const toDo = ToDo(title,dueDate,description,priority, toDoArray.length);
-        toDo.setAssociatedProjectIndex(index);
+        const toDo = ToDo(title,dueDate,description,priority, toDoArray.length, index);
         toDoArray.push(toDo);
     }
     const removeToDo =   (toDo) => {
@@ -96,6 +94,22 @@ function Project(name, i) {
         if(Number.isInteger(i)) index = i;
     }
 
+    const getStringifiedToDos = () => {
+        const stored = [];
+        toDoArray.forEach(toDo =>
+            stored[toDo.getIndex()] = {
+                title: toDo.getTitle(),
+                priority: toDo.getPriority().toString(),
+                dueDate: toDo.getDueDate().toString(),
+                description: toDo.getDescription(),
+                checked: toDo.getChecked(),
+                index: toDo.getIndex(),
+                projectIndex: toDo.getAssociatedProjectIndex()
+            }
+        )
+        return JSON.stringify(stored);
+    }
+
     setIndex(i);
 
     return {
@@ -105,18 +119,19 @@ function Project(name, i) {
         getName,
         setName,
         getNumOfSubElements,
-        getIndex
+        getIndex,
+        getStringifiedToDos
     };
 }
 
-function AppModel() {
+function AppModel(storage) {
     const projects = [];
 
     const addProject = (name) => {
         projects.push(Project(name, projects.length));
     }
     const removeProject = (project) => {
-        delete projects[project.getIndex()%projects.length]
+        delete projects[project.getIndex()%projects.length];
     }
 
     const addToDoToProject = (project, title, dueDate, description, priority) => {
@@ -133,6 +148,47 @@ function AppModel() {
 
     const getNumOfSubElements = () => projects.length;
 
+    const updateStorage = () => {
+        const stored = []
+        projects.forEach( project => {
+            stored[project.getIndex()] = (
+                {
+                    name: project.getName(),
+                    index: project.getIndex(),
+                    toDoArray: project.getStringifiedToDos()
+                }
+            );
+        })
+        storage.setItem("projects", JSON.stringify(stored));
+    };
+
+    const loadStorage = () => {
+        if(!storage.getItem("projects")) return;
+        const stored = JSON.parse(storage.getItem("projects"));
+        console.log(stored);
+        stored.forEach(project => {
+            projects[project.index] = Project(
+                project.name,
+                project.index,
+                loadToDosFromJSON(project.toDoArray)
+            );
+        })
+    }
+
+    const loadToDosFromJSON = (stringifiedToDos) => {
+        const stored = JSON.parse(stringifiedToDos);
+        const result = [];
+        stored.forEach(toDo => result[toDo.index] = ToDo(
+            toDo.title,
+            new Date(toDo.dueDate),
+            toDo.description,
+            Number.parseInt(toDo.priority),
+            Number.parseInt(toDo.index),
+            Number.parseInt(toDo.projectIndex)
+        ))
+        return result;
+    }
+
     return {
         addProject,
         removeProject,
@@ -140,5 +196,7 @@ function AppModel() {
         removeToDoFromProject,
         getIthSubElement,
         getNumOfSubElements,
+        updateStorage,
+        loadStorage
     };
 }

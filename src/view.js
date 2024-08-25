@@ -46,7 +46,8 @@ function ToDoView(doc, toDo) {
     }
 
     const updateDisplayChecked = () => {
-        checkDiv.dataset.checked = toDo.getChecked();
+        if(toDo.getChecked()) checkDiv.classList.add("checked");
+        else checkDiv.classList.remove("checked");
     }
 
     const updateDisplayTitle = () => {
@@ -93,7 +94,7 @@ function ProjectView(doc, project) {
     const projectDiv = createElement(doc, "div", Object.assign({}, commonOptionsObj, {classes:["project"]}));
     Object.assign(commonOptionsObj, {parent: projectDiv});
 
-    const nameDiv = createElement(doc, "div", Object.assign({}, commonOptionsObj, {classes:["title"], contentEdit:true}));
+    const nameDiv = createElement(doc, "div", Object.assign({}, commonOptionsObj, {classes:["name"], contentEdit:true}));
     const toDosDiv  = createElement(doc, "div", Object.assign({},commonOptionsObj, {hidable:true}));
     const showButton = createElement(doc, "button", Object.assign({}, commonOptionsObj, {classes:["project-button", "show"]}));
     const addToDo = createElement(doc, "button", Object.assign({},commonOptionsObj,{classes:["add"],parent:projectDiv}));

@@ -3,6 +3,10 @@ import { AppView } from "./view.js";
 
 export { AppController };
 
+const isDate = function(date) {
+    return (new Date(date) !== "Invalid Date") && !isNaN(new Date(date));
+}
+
 function AppController(doc, appView, appModel) {
 
     const showButtonClickHandler = (e, model, view) => {
@@ -38,7 +42,14 @@ function AppController(doc, appView, appModel) {
             const p = appModel.getIthSubElement(e.target.dataset.projectIndex);
             appModel.removeToDoFromProject(p, p.getIthSubElement(e.target.dataset.index));
             appView.getSubElementView(p).updateDisplayProject();
+        } else if(classes.contains("checkbox")) {
+            appModel.getIthSubElement(e.target.dataset.projectIndex)
+            .getIthSubElement(e.target.dataset.index)
+            .toggleChecked();
+            appView.getSubElementView(appModel.getIthSubElement(e.target.dataset.projectIndex))
+            .updateDisplayProject();
         }
+        appModel.updateStorage();
     })
 
     doc.addEventListener("submit", e => {
@@ -60,6 +71,32 @@ function AppController(doc, appView, appModel) {
                 e.preventDefault();
             }
         }
+        appModel.updateStorage();
     });
 
+    doc.addEventListener("input" , e => {
+        const classes = e.target.classList;
+        const input = e.target.textContent;
+        const data = e.target.dataset;
+        if(classes.contains("name")) {
+            appModel.getIthSubElement(data.index).setName(input);
+        } else if(classes.contains("date")) {
+            if(isDate(input)){
+                appModel.getIthSubElement(data.projectIndex)
+                .getIthSubElement(data.index).setDueDate(new Date(input));
+            }
+        } else if(classes.contains("title")) {
+            appModel.getIthSubElement(data.projectIndex)
+                .getIthSubElement(data.index).setTitle(input);
+        } else if(classes.contains("description")) {
+            appModel.getIthSubElement(data.projectIndex)
+                .getIthSubElement(data.index).setDescription(input);
+        } else if(classes.contains("priority")) {
+            if(Number.isInteger(Number.parseInt(input))) {
+                appModel.getIthSubElement(data.projectIndex)
+                .getIthSubElement(data.index).setPriority(Number.parseInt(input));
+            }
+        }
+        appModel.updateStorage();
+    })
 }
