@@ -5,10 +5,8 @@ const createElement = (doc, type, optionsObj) => {
     const e = doc.createElement(type);
     if(optionsObj.hidable) optionsObj.hidableElements.push(e);
     if(optionsObj.data) {
-        console.log(optionsObj.data);
+
         optionsObj.data.forEach( d => {
-            console.log(d.name);
-            console.log(d.content);
             e.dataset[d.name] = d.content;
         });
     }

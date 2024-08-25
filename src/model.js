@@ -81,7 +81,7 @@ function Project(name, i) {
         toDoArray.push(toDo);
     }
     const removeToDo =   (toDo) => {
-        if(getIndex in toDo) delete toDoArray[toDo.getIndex()%toDoArray.length];
+        delete toDoArray[toDo.getIndex()%toDoArray.length];
     }
     const getNumOfSubElements = () => toDoArray.length;
 
@@ -116,7 +116,7 @@ function AppModel() {
         projects.push(Project(name, projects.length));
     }
     const removeProject = (project) => {
-        if(getIndex in project) delete toDoArray[project.getIndex()%projects.length]
+        delete projects[project.getIndex()%projects.length]
     }
 
     const addToDoToProject = (project, title, dueDate, description, priority) => {
@@ -124,7 +124,7 @@ function AppModel() {
     };
 
     const removeToDoFromProject = (project, toDo) => {
-        if(removeToDo in project) project.removeToDo(toDo);
+        project.removeToDo(toDo);
     }
 
     const getIthSubElement = (i) => {

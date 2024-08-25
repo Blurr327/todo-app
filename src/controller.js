@@ -3,17 +3,6 @@ import { AppView } from "./view.js";
 
 export { AppController };
 
-function ToDoController() {
-
-    // listener handler for editable text content
-
-    // listener handler for check box
-}
-
-function ProjectController(appView, appModel) {
-
-}
-
 function AppController(doc, appView, appModel) {
 
     const showButtonClickHandler = (e, model, view) => {
@@ -41,6 +30,14 @@ function AppController(doc, appView, appModel) {
             appView.dialogObj.setId("todo-add");
             appView.dialogObj.setIndex(e.target.dataset.index);
             appView.dialogObj.showModal();
+        } else if(e.target.id == "remove-project") {
+            console.log(appModel.getIthSubElement(e.target.dataset.index));
+            appModel.removeProject(appModel.getIthSubElement(e.target.dataset.index));
+            appView.updateDisplayProjects();
+        } else if(e.target.id =="remove-todo") {
+            const p = appModel.getIthSubElement(e.target.dataset.projectIndex);
+            appModel.removeToDoFromProject(p, p.getIthSubElement(e.target.dataset.index));
+            appView.getSubElementView(p).updateDisplayProject();
         }
     })
 

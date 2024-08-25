@@ -28,6 +28,9 @@ function ToDoView(doc, toDo) {
     const checkDiv = createElement(doc, "div", Object.assign({}, commonOptionsObj, {classes: ["checkbox"]}));
     const descriptionDiv = createElement(doc, "div",Object.assign({}, editableOptionsObj, {hidable:true, classes:["description"]}));
     const showButton = createElement(doc, "button", Object.assign({}, commonOptionsObj, {classes:["show", "todo-button"]}));
+    const removeToDo = createElement(doc, "button", Object.assign({},commonOptionsObj,{classes:["add"],parent:toDoDiv}));
+    removeToDo.textContent = "Remove Todo";
+    removeToDo.id = "remove-todo";
 
     const updateDisplayString = (textElement, text) => {
         if(typeof text !== "string") return;
@@ -105,6 +108,7 @@ function ProjectView(doc, project) {
     const updateDisplayToDos = () => {
         toDosDiv.textContent = "";
         for(let i =0;i<project.getNumOfSubElements();i++) {
+            if(!project.getIthSubElement(i)) continue;
             if(!toDoViewsMap.has(project.getIthSubElement(i))) toDoViewsMap.set(project.getIthSubElement(i),
             ToDoView(doc, project.getIthSubElement(i)));
             let toDoView = toDoViewsMap.get(project.getIthSubElement(i));
@@ -156,6 +160,7 @@ function AppView(doc, appModel) {
     const updateDisplayProjects = () => {
         projectsDiv.textContent = "";
         for(let i = 0;i<appModel.getNumOfSubElements();i++) {
+            if(!appModel.getIthSubElement(i)) continue;
             let projectView;
             if(!projectViewsMap.has(appModel.getIthSubElement(i))) projectViewsMap.set(appModel.getIthSubElement(i),
         ProjectView(doc, appModel.getIthSubElement(i)));
