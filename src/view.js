@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { createElement, toggleVisibilityOfElements, updateDisplayShowButton } from "./dom-manipulation.js";
+import { createElement, toggleVisibilityOfElements, updateDisplayShowButton, Dialog } from "./dom-manipulation.js";
 
 export { AppView };
 
@@ -7,12 +7,18 @@ function ToDoView(doc, toDo) {
     const hidableElements = [];
     let commonOptionsObj = {
         hidableElements,
-        data: {
+        data: [
+            {
             name:"index",
             content: toDo.getIndex()
+        },
+        {
+            name:"projectIndex",
+            content: toDo.getAssociatedProjectIndex()
         }
+        ]
     }
-    const toDoDiv = createElement(doc, "div",Object.assign({},commonOptionsObj, {classes:["todo"]}));
+    const toDoDiv = createElement(doc, "div",Object.assign({},commonOptionsObj, {classes:["todo"], data:undefined}));
     Object.assign(commonOptionsObj, {parent: toDoDiv});
     const editableOptionsObj = Object.assign({},commonOptionsObj, {contentEdit:true});
 
@@ -74,10 +80,12 @@ function ProjectView(doc, project) {
     const hidableElements = [];
     let commonOptionsObj = {
         hidableElements,
-        data: {
+        data: [
+            {
             name: "index",
             content: project.getIndex()
-        }
+            }
+        ]
     }
     const projectDiv = createElement(doc, "div", Object.assign({}, commonOptionsObj, {classes:["project"]}));
     Object.assign(commonOptionsObj, {parent: projectDiv});
@@ -85,6 +93,12 @@ function ProjectView(doc, project) {
     const nameDiv = createElement(doc, "div", Object.assign({}, commonOptionsObj, {classes:["title"], contentEdit:true}));
     const toDosDiv  = createElement(doc, "div", Object.assign({},commonOptionsObj, {hidable:true}));
     const showButton = createElement(doc, "button", Object.assign({}, commonOptionsObj, {classes:["project-button", "show"]}));
+    const addToDo = createElement(doc, "button", Object.assign({},commonOptionsObj,{classes:["add"],parent:projectDiv}));
+    addToDo.textContent = "Add ToDo";
+    addToDo.id ="todo-add";
+    const removeProject = createElement(doc, "button", Object.assign({},commonOptionsObj,{classes:["add"],parent:projectDiv}));
+    removeProject.textContent = "Remove Project";
+    removeProject.id = "remove-project";
 
     const toDoViewsMap = new Map();
 
@@ -94,7 +108,7 @@ function ProjectView(doc, project) {
             if(!toDoViewsMap.has(project.getIthSubElement(i))) toDoViewsMap.set(project.getIthSubElement(i),
             ToDoView(doc, project.getIthSubElement(i)));
             let toDoView = toDoViewsMap.get(project.getIthSubElement(i));
-            toDoView.updateDisplayToDo(); // might be problematic (passing by reference or... ?)
+            toDoView.updateDisplayToDo();
             toDoView.appendToDoDivTo(toDosDiv);
         }
     }
@@ -130,7 +144,11 @@ function AppView(doc, appModel) {
     const projectsDiv = doc.createElement("div");
     const contentDiv = doc.querySelector("#content");
     const projectViewsMap = new Map();
+    const addProjectButton = createElement(doc, "button", {classes:["add"],parent:contentDiv});
+    addProjectButton.textContent = "Add Project";
+    addProjectButton.id ="project-add";
 
+    const dialogObj = Dialog(doc);
     projectsDiv.classList.add("projects");
 
     contentDiv.appendChild(projectsDiv);
@@ -142,7 +160,7 @@ function AppView(doc, appModel) {
             if(!projectViewsMap.has(appModel.getIthSubElement(i))) projectViewsMap.set(appModel.getIthSubElement(i),
         ProjectView(doc, appModel.getIthSubElement(i)));
             projectView = projectViewsMap.get(appModel.getIthSubElement(i))
-            projectView.updateDisplayProject(); // might be problematic (passing by reference or... ?)
+            projectView.updateDisplayProject();
             projectView.appendProjectDivTo(projectsDiv);
         }
     }
@@ -154,6 +172,7 @@ function AppView(doc, appModel) {
 
     return {
         updateDisplayProjects,
-        getSubElementView
+        getSubElementView,
+        dialogObj
     };
 }

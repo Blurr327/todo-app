@@ -6,7 +6,8 @@ function ToDo(title, dueDate, description, priority, i) {
         inDescription,
         inPriority,
         checked,
-        index;
+        index,
+        projectIndex;
 
     const getTitle = () => inTitle;
     const setTitle = (t) => {
@@ -38,6 +39,13 @@ function ToDo(title, dueDate, description, priority, i) {
         if(Number.isInteger(i)) index = i;
     }
 
+    const getAssociatedProjectIndex = () => {
+        return projectIndex;
+    }
+    const setAssociatedProjectIndex = (i) => {
+        if(Number.isInteger(i)) projectIndex = i;
+    }
+
     setTitle(title), setDueDate(dueDate),
     setDescription(description), setPriority(priority),
     setIndex(i);
@@ -54,7 +62,9 @@ function ToDo(title, dueDate, description, priority, i) {
         getChecked,
         toggleChecked,
         getIndex,
-        setIndex
+        setIndex,
+        getAssociatedProjectIndex,
+        setAssociatedProjectIndex
     };
 }
 
@@ -66,7 +76,9 @@ function Project(name, i) {
 
     const getIthSubElement = (i) => toDoArray[i%toDoArray.length];
     const addToDo = (title, dueDate, description, priority) => {
-        toDoArray.push(ToDo(title,dueDate,description,priority, toDoArray.length));
+        const toDo = ToDo(title,dueDate,description,priority, toDoArray.length);
+        toDo.setAssociatedProjectIndex(index);
+        toDoArray.push(toDo);
     }
     const removeToDo =   (toDo) => {
         if(getIndex in toDo) delete toDoArray[toDo.getIndex()%toDoArray.length];
@@ -127,6 +139,6 @@ function AppModel() {
         addToDoToProject,
         removeToDoFromProject,
         getIthSubElement,
-        getNumOfSubElements
+        getNumOfSubElements,
     };
 }
