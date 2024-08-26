@@ -167,25 +167,32 @@ function AppModel(storage) {
         const stored = JSON.parse(storage.getItem("projects"));
         console.log(stored);
         stored.forEach(project => {
-            projects[project.index] = Project(
-                project.name,
-                project.index,
-                loadToDosFromJSON(project.toDoArray)
-            );
+            if(project){
+                projects[project.index] = Project(
+                    project.name,
+                    project.index,
+                    loadToDosFromJSON(project.toDoArray)
+                );
+            }
         })
     }
 
     const loadToDosFromJSON = (stringifiedToDos) => {
         const stored = JSON.parse(stringifiedToDos);
         const result = [];
-        stored.forEach(toDo => result[toDo.index] = ToDo(
-            toDo.title,
-            new Date(toDo.dueDate),
-            toDo.description,
-            Number.parseInt(toDo.priority),
-            Number.parseInt(toDo.index),
-            Number.parseInt(toDo.projectIndex)
-        ))
+        stored.forEach(toDo => {
+            if(toDo){
+                result[toDo.index] = ToDo(
+                    toDo.title,
+                    new Date(toDo.dueDate),
+                    toDo.description,
+                    Number.parseInt(toDo.priority),
+                    Number.parseInt(toDo.index),
+                    Number.parseInt(toDo.projectIndex)
+                );
+            }
+        });
+
         return result;
     }
 

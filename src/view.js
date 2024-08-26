@@ -18,7 +18,7 @@ function ToDoView(doc, toDo) {
         }
         ]
     }
-    const toDoDiv = createElement(doc, "div",Object.assign({},commonOptionsObj, {classes:["todo"], data:undefined}));
+    const toDoDiv = createElement(doc, "div",Object.assign({},commonOptionsObj, {classes:["todo", "block"], data:undefined}));
     Object.assign(commonOptionsObj, {parent: toDoDiv});
     const editableOptionsObj = Object.assign({},commonOptionsObj, {contentEdit:true});
 
@@ -28,7 +28,7 @@ function ToDoView(doc, toDo) {
     const checkDiv = createElement(doc, "div", Object.assign({}, commonOptionsObj, {classes: ["checkbox"]}));
     const descriptionDiv = createElement(doc, "div",Object.assign({}, editableOptionsObj, {hidable:true, classes:["description"]}));
     const showButton = createElement(doc, "button", Object.assign({}, commonOptionsObj, {classes:["show", "todo-button"]}));
-    const removeToDo = createElement(doc, "button", Object.assign({},commonOptionsObj,{classes:["add"],parent:toDoDiv}));
+    const removeToDo = createElement(doc, "button", Object.assign({},commonOptionsObj,{classes:["add","block","warning"],parent:toDoDiv}));
     removeToDo.textContent = "Remove Todo";
     removeToDo.id = "remove-todo";
 
@@ -91,7 +91,7 @@ function ProjectView(doc, project) {
             }
         ]
     }
-    const projectDiv = createElement(doc, "div", Object.assign({}, commonOptionsObj, {classes:["project"]}));
+    const projectDiv = createElement(doc, "div", Object.assign({}, commonOptionsObj, {classes:["project", "block"]}));
     Object.assign(commonOptionsObj, {parent: projectDiv});
 
     const nameDiv = createElement(doc, "div", Object.assign({}, commonOptionsObj, {classes:["name"], contentEdit:true}));
@@ -100,7 +100,7 @@ function ProjectView(doc, project) {
     const addToDo = createElement(doc, "button", Object.assign({},commonOptionsObj,{classes:["add"],parent:projectDiv}));
     addToDo.textContent = "Add ToDo";
     addToDo.id ="todo-add";
-    const removeProject = createElement(doc, "button", Object.assign({},commonOptionsObj,{classes:["add"],parent:projectDiv}));
+    const removeProject = createElement(doc, "button", Object.assign({},commonOptionsObj,{classes:["add", "block", "warning"],parent:projectDiv}));
     removeProject.textContent = "Remove Project";
     removeProject.id = "remove-project";
 
@@ -147,6 +147,7 @@ function ProjectView(doc, project) {
 
 function AppView(doc, appModel) {
     const projectsDiv = doc.createElement("div");
+    projectsDiv.classList.add("block");
     const contentDiv = doc.querySelector("#content");
     const projectViewsMap = new Map();
     const addProjectButton = createElement(doc, "button", {classes:["add"],parent:contentDiv});
@@ -155,6 +156,8 @@ function AppView(doc, appModel) {
 
     const dialogObj = Dialog(doc);
     projectsDiv.classList.add("projects");
+    projectsDiv.classList.add("inverted");
+    projectsDiv.id = "projects"
 
     contentDiv.appendChild(projectsDiv);
 

@@ -1,12 +1,193 @@
-.projects {
-    background-color: #ddd;
-    color:black;
-    width: 100%;
+@font-face {
+    font-family:"raleway";
+    src:url(../assets/fonts/Raleway-Regular.ttf);
+    display:swap;
+}
+
+body {
+    font-family:"raleway";
+}
+
+:root {
+    font-size:62.5%;
+    --clr-primary:#134B70;
+    --clr-secondary: #EEEEEE;
+    --clr-attention: red;
+}
+
+*, *::before, *::after {
+    box-sizing:border-box;
+    font:inherit;
+}
+
+body {
+    --body:var(--clr-primary);
+    --bg:var(--clr-secondary);
+    --fs:clamp(1.6rem, 0.6rem + 1vw, 2.4rem);
+    margin:0;
     height:100vh;
+    display:flex;
+    flex-direction:column;
+    font-size:var(--fs);
+    background-color:var(--clr-secondary);
+    color:var(--clr-primary);
+}
+
+.block {
+    font-size:var(--fs);
+    background-color: var(--bg);
+    color:var(--body);
+}
+
+nav {
+    display:flex;
+    justify-content: space-between;
+    flex-wrap:wrap;
+    padding:1.6rem;
+    border-bottom:.2rem solid #134B70;
+}
+
+ul {
+    margin:0;
+    padding:0;
+    list-style:none;
+    display:flex;
+    justify-content:space-evenly;
+    align-items: center;
+    gap:2.4rem;
+    width: fit-content;
+    min-width: 60%;
+    text-align:center;
+}
+
+.logo {
+    display:flex;
+    align-items: center;
+    font-size: 3.6rem;
+    font-weight:bolder;
+}
+
+.block.inverted {
+    --bg:var(--clr-primary);
+    --body:var(--clr-secondary);
+}
+
+.footer {
+    text-align:center;
+}
+
+#content {
+    flex:1;
+    overflow:scroll;
+    display:flex;
+    flex-direction:column;
+    align-items: center;
+    padding:3.6rem;
+}
+
+#projects {
+    height:100%;
+    width: 90rem;
+    max-width:80vw;
+    overflow:scroll;
+}
+
+.project {
+    display:flex;
+    flex-direction:column;
+    min-height: 15rem;
+
+    border-bottom:.8rem solid #201E43;
+    padding:2.4rem;
+}
+
+button {
+    border:.2rem solid #201E43;
+    border-radius:.6rem;
+    margin:.2rem;
+}
+
+.project .name {
+    height:10rem;
+}
+
+.show {
+    position:sticky;
+
+    width:fit-content;
+    align-self: flex-end;
+    order:1;
+}
+
+.warning {
+    --bg: rgb(255,0,0,0.5);
+    border-radius:.6rem;
+}
+
+.warning:hover {
+    --bg: rgb(255,0,0,0.3);
+}
+
+#remove-project, #todo-add {
+    width:fit-content;
+}
+
+.todo {
+    display:flex;
+    flex-direction:column;
+    padding:2.4rem;
+    flex-wrap:wrap;
 }
 
 .checkbox {
-    background-color: blue;
-    height:10px;
-    width:10px;
+    order:-1;
+    position:relative;
+    height: 3rem;
+    width: 3rem;
+    border:.2rem solid #EEEEEE;
+}
+
+.checkbox.checked::before {
+    content:"✓";
+    position:absolute;
+    font-size:2.4rem;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+}
+
+.todo .date {
+    order:2;
+    font-size:small;
+    align-self: flex-end;
+}
+
+.todo .title {
+    font-size:larger;
+    margin:.6rem;
+}
+
+.todo .priority {
+    border:.2rem solid #508C9B;
+    padding:.6rem;
+    margin:.2rem;
+    background-color:#508C9B;
+    border-radius:.6rem;
+    text-align:center;
+}
+
+.description {
+    display: block;
+    border:.2rem solid #EEEEEE;
+    padding:.6rem;
+    border-radius:.6rem;
+}
+
+label {
+    display:block;
+}
+
+input {
+    margin-top:.6rem;
+    margin-bottom:.6rem;
 }
