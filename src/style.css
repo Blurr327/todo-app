@@ -112,8 +112,6 @@ button {
 }
 
 .show {
-    position:sticky;
-
     width:fit-content;
     align-self: flex-end;
     order:1;
@@ -157,7 +155,6 @@ button {
 }
 
 .todo .date {
-    order:2;
     font-size:small;
     align-self: flex-end;
 }
